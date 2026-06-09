@@ -5,3 +5,12 @@ logs/
 backups/
 .env
 .DS_Store
+
+# OpenSpec
+openspec/changes/
+
+# open-mem runtime state
+.open-mem/
+
+# Dashboard build artifacts and local state
+dashboard/

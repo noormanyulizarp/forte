@@ -10,7 +10,11 @@
     "build": "tsc",
     "dev": "tsx src/cli.ts",
     "start": "node dist/cli.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration",
+    "test:e2e": "jest tests/e2e",
+    "test:cov": "jest --coverage"
   },
   "keywords": [
     "mcp",
@@ -29,7 +33,11 @@
     "js-yaml": "^4.2.0"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",
+    "jest": "^30.4.2",
+    "tmp": "^0.2.7",
+    "ts-jest": "^29.4.11",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0"
   }
