@@ -62,7 +62,8 @@ async function applyMCPsToTool(
   const fullPath = path.resolve(configPath);
   
   if (!fs.existsSync(fullPath)) {
-    throw new Error(`Config file not found: ${fullPath}`);
+    console.log(`  ⚠️  Config not found, skipping: ${fullPath}`);
+    return { applied: 0 };
   }
   
   // Backup original config
