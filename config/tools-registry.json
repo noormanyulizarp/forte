@@ -3,7 +3,7 @@
     "claude-code": {
       "name": "Claude Code",
       "type": "code_editor",
-      "config_path": "~/.config/claude-code/claude_desktop_config.json",
+      "config_path": "/root/.config/claude-code/claude_desktop_config.json",
       "config_format": "json",
       "mcp_key": "mcpServers",
       "supports_env": true,
@@ -14,7 +14,7 @@
     "cline": {
       "name": "Cline",
       "type": "code_editor",
-      "config_path": "~/.clinerules",
+      "config_path": "/root/.clinerules",
       "config_format": "yaml",
       "mcp_key": "mcp",
       "supports_env": true,
@@ -25,7 +25,7 @@
     "opencode": {
       "name": "OpenCode",
       "type": "code_editor",
-      "config_path": "~/.opencode/settings.json",
+      "config_path": "/root/.opencode/settings.json",
       "config_format": "json",
       "mcp_key": "mcp",
       "supports_env": true,
@@ -36,7 +36,7 @@
     "kilocode": {
       "name": "KiloCode",
       "type": "code_editor",
-      "config_path": "~/.kilocode/mcp.json",
+      "config_path": "/root/.kilocode/mcp.json",
       "config_format": "json",
       "mcp_key": "mcp_servers",
       "supports_env": true,
@@ -58,7 +58,7 @@
     "hermes": {
       "name": "Hermes",
       "type": "agent_framework",
-      "config_path": "~/.hermes/config.yaml",
+      "config_path": "/root/.hermes/config.yaml",
       "config_format": "yaml",
       "mcp_key": "mcp_servers",
       "supports_env": true,
@@ -69,7 +69,7 @@
     "picoclaw": {
       "name": "PicoClaw",
       "type": "agent_framework",
-      "config_path": "~/.picoclaw/config.json",
+      "config_path": "/root/.picoclaw/config.json",
       "config_format": "json",
       "mcp_key": "mcp.servers",
       "supports_env": true,
