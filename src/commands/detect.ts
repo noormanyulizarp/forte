@@ -3,26 +3,45 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import * as yaml from 'js-yaml';
+import { resolveToolPath, validatePath, getToolInfo } from '../lib/path-resolver';
 
 const toolsRegistry = require('../../config/tools-registry.json');
 
 export const detectCommand = new Command('detect')
   .description('Auto-detect installed AI development tools')
   .option('-v, --verbose', 'Show detailed information')
+  .option('--tool <tool-name>', 'Detect specific tool only')
+  // Dynamic path options for each tool
+  .option('--claude-code-path <path>', 'Custom path for Claude Code')
+  .option('--cline-path <path>', 'Custom path for Cline')
+  .option('--opencode-path <path>', 'Custom path for OpenCode')
+  .option('--kilocode-path <path>', 'Custom path for KiloCode')
+  .option('--gemini-code-path <path>', 'Custom path for Gemini Code')
+  .option('--cursor-path <path>', 'Custom path for Cursor')
+  .option('--windsurf-path <path>', 'Custom path for Windsurf')
+  .option('--openclaw-path <path>', 'Custom path for OpenClaw')
+  .option('--hermes-path <path>', 'Custom path for Hermes')
+  .option('--picoclaw-path <path>', 'Custom path for PicoClaw')
   .action(async (options) => {
     console.log('🔍 Scanning for AI development tools...\n');
     
     const results = [];
     const tools = toolsRegistry.tools;
     
-    for (const [toolId, toolConfig] of Object.entries(tools)) {
-      const result = await detectTool(toolId, toolConfig as any);
+    // Filter by tool if specified
+    const toolsToDetect = options.tool 
+      ? { [options.tool]: tools[options.tool] } 
+      : tools;
+    
+    for (const [toolId, toolConfig] of Object.entries(toolsToDetect)) {
+      const result = await detectTool(toolId, toolConfig as any, options);
       results.push(result);
       
       if (options.verbose) {
         console.log(`  ${result.found ? '✓' : '✗'} ${result.tool}`);
         if (result.found) {
           console.log(`    Path: ${result.config_path}`);
+          console.log(`    Source: ${result.config_source || 'default'}`);
           console.log(`    MCPs: ${result.mcp_count}`);
         } else if (result.error) {
           console.log(`    Error: ${result.error}`);
@@ -46,11 +65,17 @@ export const detectCommand = new Command('detect')
 
 async function detectTool(
   toolId: string,
-  toolConfig: any
+  toolConfig: any,
+  options: any
 ): Promise<any> {
+  // Resolve path with priority: custom > ENV > config > default
+  const pathOption = `${toolId.replace(/-/g, '-')}-path` as keyof typeof options
+  const customPath = options[pathOption] as string | undefined
+  
+  const configPath = resolveToolPath(toolId, customPath)
+  const fullPath = path.resolve(configPath)
+  
   try {
-    const configPath = toolConfig.config_path.replace('~', os.homedir());
-    const fullPath = path.resolve(configPath);
     
     if (!fs.existsSync(fullPath)) {
       return {
@@ -78,6 +103,7 @@ async function detectTool(
       tool: toolConfig.name,
       found: true,
       config_path: fullPath,
+      config_source: customPath ? 'custom' : 'default',
       mcp_count: mcpCount
     };
     
@@ -85,6 +111,7 @@ async function detectTool(
     return {
       tool: toolConfig.name,
       found: false,
+      config_path: fullPath,
       error: error.message
     };
   }
