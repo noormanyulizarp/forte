@@ -10,6 +10,7 @@ import { backupCommand } from './commands/backup';
 import { envCommand } from './commands/env';
 import { profileCommand } from './commands/profile';
 import { validateCommand } from './commands/validate';
+import { toolCommand } from './commands/tool';
 
 const program = new Command();
 
@@ -43,6 +44,9 @@ program.addCommand(envCommand);
 
 // Profile management
 program.addCommand(profileCommand);
+
+// Tool management
+program.addCommand(toolCommand);
 
 // Validation
 program.addCommand(validateCommand);
