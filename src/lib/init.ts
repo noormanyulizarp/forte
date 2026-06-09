@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as yaml from 'js-yaml';
 import { backupConfig } from './backup';
+import { resolveEnvString, checkMcpEnvDependencies } from './env-storage';
 
 const toolsRegistry = require('../../config/tools-registry.json');
 
@@ -121,6 +122,12 @@ async function applyMCPsToTool(
 function transformMCPForTool(mcpData: any, toolConfig: ToolConfigType): any {
   const transformed: any = {};
   
+  // Check env dependencies
+  const { missing } = checkMcpEnvDependencies(mcpData);
+  if (missing.length > 0) {
+    console.warn(`  ⚠️  Missing env vars: ${missing.join(', ')}`);
+  }
+  
   // Command format transformation
   switch (toolConfig.command_format) {
     case 'string+array':
@@ -138,12 +145,19 @@ function transformMCPForTool(mcpData: any, toolConfig: ToolConfigType): any {
       break;
   }
   
-  // Environment variables
+  // Environment variables (resolve ${VAR} references)
   if (mcpData.env && Object.keys(mcpData.env).length > 0) {
+    const resolvedEnv: Record<string, string> = {};
+    
+    for (const [key, value] of Object.entries(mcpData.env)) {
+      // Resolve ${VAR} references
+      resolvedEnv[key] = resolveEnvString(value as string);
+    }
+    
     if (toolConfig.env_syntax === 'env') {
-      transformed.env = mcpData.env;
+      transformed.env = resolvedEnv;
     } else if (toolConfig.env_syntax === 'environment') {
-      transformed.environment = mcpData.env;
+      transformed.environment = resolvedEnv;
     }
   }
   
