@@ -1,27 +1,55 @@
 import { Command } from 'commander';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
+import {
+  connectToRepo,
+  pushToRepo,
+  pullFromRepo,
+  getRepoStatus,
+  getRepoStatusSummary,
+  getRepoConfig
+} from '../lib/repo-sync';
 
 export const repoCommand = new Command('repo')
   .description('Repository integration (GitHub/GitLab/Bitbucket)')
   .addCommand(
     new Command('connect <platform> <repo>')
       .description('Connect to a repository')
-      .argument('<platform>', 'Repository platform (github/gitlab/bitbucket)')
-      .argument('<repo>', 'Repository (user/repo)')
       .option('-t, --token <token>', 'Authentication token')
       .action(async (platform, repo, options) => {
-        console.log(`Connecting to ${platform} repository: ${repo}`);
-        // TODO: Implement repository connection
-        console.log('Repository integration coming soon');
+        const result = await connectToRepo(
+          platform as 'github' | 'gitlab' | 'bitbucket',
+          repo
+        );
+        
+        if (result.success) {
+          console.log(`✓ ${result.message}`);
+        } else {
+          console.error(`✗ Failed: ${result.error}`);
+          if (result.error?.includes('authentication')) {
+            console.log('\n💡 Authentication required:');
+            console.log('  GitHub: Create PAT with repo scope');
+            console.log('  GitLab: Create Personal Access Token');
+            console.log('  Bitbucket: Generate App Password');
+          }
+          process.exit(1);
+        }
       })
   )
   .addCommand(
     new Command('push')
       .description('Push config to repository')
-      .option('-m, --message <message>', 'Commit message', 'Update Forte config')
+      .option('-m, --message <message>', 'Commit message')
       .action(async (options) => {
-        console.log('Pushing config to repository...');
-        // TODO: Implement push
-        console.log('Push functionality coming soon');
+        const result = await pushToRepo(options.message);
+        
+        if (result.success) {
+          console.log(`✓ ${result.message}`);
+        } else {
+          console.error(`✗ Failed: ${result.error}`);
+          process.exit(1);
+        }
       })
   )
   .addCommand(
@@ -29,26 +57,41 @@ export const repoCommand = new Command('repo')
       .description('Pull config from repository')
       .option('-f, --force', 'Force overwrite local config')
       .action(async (options) => {
-        console.log('Pulling config from repository...');
-        // TODO: Implement pull
-        console.log('Pull functionality coming soon');
+        const result = await pullFromRepo(options.force);
+        
+        if (result.success) {
+          console.log(`✓ ${result.message}`);
+        } else {
+          console.error(`✗ Failed: ${result.error}`);
+          process.exit(1);
+        }
       })
   )
   .addCommand(
     new Command('status')
       .description('Show repository status')
       .action(async () => {
-        console.log('Repository status:');
-        // TODO: Implement status
-        console.log('Status functionality coming soon');
+        const summary = await getRepoStatusSummary();
+        console.log(summary);
       })
   )
   .addCommand(
     new Command('disconnect')
       .description('Disconnect from repository')
       .action(async () => {
-        console.log('Disconnecting from repository...');
-        // TODO: Implement disconnect
-        console.log('Disconnect functionality coming soon');
+        const config = getRepoConfig();
+        
+        if (!config) {
+          console.error('Error: Not connected to any repository');
+          process.exit(1);
+        }
+        
+        // Remove config
+        const forteDir = path.join(os.homedir(), '.forte');
+        const configPath = path.join(forteDir, 'repository.yaml');
+        
+        fs.unlinkSync(configPath);
+        
+        console.log('✓ Disconnected from repository');
       })
   );

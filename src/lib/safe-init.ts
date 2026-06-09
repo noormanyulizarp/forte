@@ -3,15 +3,14 @@ import * as path from 'path';
 import * as os from 'os';
 import * as yaml from 'js-yaml';
 import { backupConfig } from './backup';
-import { safeWriteConfig, ConfigWriteStrategy } from './config-handler';
+import { safeWriteConfig } from './config-handler';
 
 const toolsRegistry = require('../../config/tools-registry.json');
 
 export async function safeInitMCPToTool(
   toolId: string,
   mcpName: string,
-  mcpData: any,
-  strategy: ConfigWriteStrategy['mcp_only'] = 'safe'
+  mcpData: any
 ): Promise<{ success: boolean; message: string }> {
   
   try {
@@ -46,9 +45,17 @@ export async function safeInitMCPToTool(
     };
     
     // Safe write
-    const result = await safeWriteConfig(toolId, fullPath, newMCPs, strategy);
+    const result = await safeWriteConfig(
+      fullPath,
+      newMCPs,
+      toolConfig.mcp_key,
+      { create_backup: true }
+    );
     
-    return result;
+    return {
+      success: result.success,
+      message: result.message || result.error || 'Unknown error'
+    };
     
   } catch (error: any) {
     return {

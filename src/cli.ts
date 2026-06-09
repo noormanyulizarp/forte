@@ -62,4 +62,7 @@ program.addCommand(disableStatusCommand);
 // Validation
 program.addCommand(validateCommand);
 
+// Note: Commands are defined but subcommand parsing has bugs
+// User can still access via library calls until bug is fixed
+
 program.parse();

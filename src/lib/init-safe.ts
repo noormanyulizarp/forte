@@ -4,7 +4,6 @@ import * as os from 'os';
 import * as yaml from 'js-yaml';
 import { backupConfig } from './backup';
 import { resolveEnvString, checkMcpEnvDependencies } from './env-storage';
-import { safeWriteConfig } from './config-handler';
 
 const toolsRegistry = require('../../config/tools-registry.json');
 
@@ -99,7 +98,7 @@ async function initTool(
     mcpObj[finalKey] = {};
   }
   
-  // Apply MCPs with safe config handling
+  // Apply MCPs directly (merge into existing config)
   const mcpConfigs = mcpObj[finalKey];
   let applied = 0;
   
@@ -107,23 +106,17 @@ async function initTool(
     const transformed = transformMCPForTool(mcpData as any, toolConfig);
     
     if (force || !mcpConfigs[mcpName]) {
-      // Safe write MCP to config
-      const newMCPs = { [mcpName]: transformed };
-      const result = await safeWriteConfig(
-        toolId,
-        fullPath,
-        newMCPs,
-        'safe'
-      );
-      
-      if (result.success) {
-        applied++;
-      } else {
-        console.log(`  ⊘ Skipped ${mcpName}: ${result.message}`);
-      }
+      // Apply MCP to config
+      mcpConfigs[mcpName] = transformed;
+      applied++;
+      console.log(`  ✓ Applied ${mcpName}`);
     }
   }
   
+  // Write config
+  fs.writeFileSync(fullPath, yaml.dump(config));
+  
+  console.log(`  → ${applied} MCPs applied`);
   return { applied };
 }
 
