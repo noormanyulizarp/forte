@@ -11,6 +11,8 @@ import { envCommand } from './commands/env';
 import { profileCommand } from './commands/profile';
 import { validateCommand } from './commands/validate';
 import { toolCommand } from './commands/tool';
+import { depsCommand } from './commands/deps';
+import { disableCommand, enableCommand, disableListCommand, disableStatusCommand } from './commands/disable';
 
 const program = new Command();
 
@@ -47,6 +49,15 @@ program.addCommand(profileCommand);
 
 // Tool management
 program.addCommand(toolCommand);
+
+// Dependency management
+program.addCommand(depsCommand);
+
+// Disable management
+program.addCommand(disableCommand);
+program.addCommand(enableCommand);
+program.addCommand(disableListCommand);
+program.addCommand(disableStatusCommand);
 
 // Validation
 program.addCommand(validateCommand);
