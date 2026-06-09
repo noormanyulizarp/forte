@@ -8,7 +8,7 @@ import {
   pullFromRepo,
   getRepoStatus,
   getRepoStatusSummary,
-  getRepoConfig
+  disconnectFromRepo
 } from '../lib/repo-sync';
 
 export const repoCommand = new Command('repo')
@@ -16,8 +16,7 @@ export const repoCommand = new Command('repo')
   .addCommand(
     new Command('connect <platform> <repo>')
       .description('Connect to a repository')
-      .option('-t, --token <token>', 'Authentication token')
-      .action(async (platform, repo, options) => {
+      .action(async (platform, repo) => {
         const result = await connectToRepo(
           platform as 'github' | 'gitlab' | 'bitbucket',
           repo
@@ -27,12 +26,6 @@ export const repoCommand = new Command('repo')
           console.log(`✓ ${result.message}`);
         } else {
           console.error(`✗ Failed: ${result.error}`);
-          if (result.error?.includes('authentication')) {
-            console.log('\n💡 Authentication required:');
-            console.log('  GitHub: Create PAT with repo scope');
-            console.log('  GitLab: Create Personal Access Token');
-            console.log('  Bitbucket: Generate App Password');
-          }
           process.exit(1);
         }
       })
@@ -46,6 +39,9 @@ export const repoCommand = new Command('repo')
         
         if (result.success) {
           console.log(`✓ ${result.message}`);
+          if (result.commit_hash) {
+            console.log(`  Commit: ${result.commit_hash}`);
+          }
         } else {
           console.error(`✗ Failed: ${result.error}`);
           process.exit(1);
@@ -79,19 +75,13 @@ export const repoCommand = new Command('repo')
     new Command('disconnect')
       .description('Disconnect from repository')
       .action(async () => {
-        const config = getRepoConfig();
+        const result = await disconnectFromRepo();
         
-        if (!config) {
-          console.error('Error: Not connected to any repository');
+        if (result.success) {
+          console.log(`✓ ${result.message}`);
+        } else {
+          console.error(`✗ Failed: ${result.error}`);
           process.exit(1);
         }
-        
-        // Remove config
-        const forteDir = path.join(os.homedir(), '.forte');
-        const configPath = path.join(forteDir, 'repository.yaml');
-        
-        fs.unlinkSync(configPath);
-        
-        console.log('✓ Disconnected from repository');
       })
   );
