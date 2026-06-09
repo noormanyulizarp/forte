@@ -52,7 +52,7 @@ export async function initAll(
   }
 }
 
-async function applyMCPsToTool(
+export async function applyMCPsToTool(
   toolId: string,
   toolConfig: ToolConfigType,
   mcpRegistry: Record<string, any>,

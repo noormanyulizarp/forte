@@ -1,3 +1,7 @@
+jest.mock('../../src/lib/backup', () => ({
+  backupConfig: jest.fn()
+}));
+
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
@@ -23,17 +27,27 @@ describe('e2e: init-all resilience', () => {
     expect(process.exit).not.toHaveBeenCalled();
   });
 
-  it('init-all applies MCPs when config exists', () => {
-    const configPath = path.join(tmpHome, 'claude_desktop_config.json');
+  it('applies MCPs to an existing config via applyMCPsToTool', async () => {
+    const configPath = path.join(tmpHome, '.config', 'claude-code', 'claude_desktop_config.json');
     fs.mkdirSync(path.dirname(configPath), { recursive: true });
     fs.writeFileSync(configPath, JSON.stringify({ mcpServers: {} }, null, 2));
 
-    const { initAll } = require('../../src/lib/init');
-    initAll({
+    const { applyMCPsToTool } = require('../../src/lib/init');
+    const toolConfig = {
+      name: 'Claude Code',
+      config_path: configPath,
+      config_format: 'json',
+      mcp_key: 'mcpServers',
+      command_format: 'string+array',
+      env_syntax: 'env',
+      enable_key: null,
+      supports_env: true
+    };
+    const result = await applyMCPsToTool('claude-code', toolConfig, {
       'demo-mcp': { command: 'npx', args: ['-y', 'demo'] }
     }, true);
 
-    expect(process.exit).not.toHaveBeenCalled();
+    expect(result.applied).toBe(1);
     const updated = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
     expect(updated.mcpServers['demo-mcp']).toBeDefined();
   });
