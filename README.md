@@ -501,7 +501,7 @@ Tool Native Format
 Web-based UI untuk visual management:
 
 ```bash
-cd /root/forte-dashboard
+cd /root/forte/dashboard
 npm run dev
 # Visit http://localhost:3000
 ```
@@ -513,7 +513,7 @@ npm run dev
 - Profile management
 - Repository integration
 
-See [Forte Dashboard](../forte-dashboard/) for details.
+See [Forte Dashboard](./dashboard) for details.
 
 ---
 
