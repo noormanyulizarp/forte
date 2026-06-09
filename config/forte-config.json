@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "cli": {
+    "name": "forte",
+    "description": "Unified MCP Manager",
+    "version": "1.0.0"
+  },
+  "discovery": {
+    "enabled": true,
+    "scan_paths": [
+      "/usr/local/bin",
+      "/root/.npm/_npx",
+      "/root/.local/bin"
+    ],
+    "npm_packages": [
+      "@modelcontextprotocol/server-*",
+      "@agentmemory/mcp"
+    ]
+  },
+  "sync": {
+    "auto_backup": true,
+    "backup_dir": "/root/forte/backups",
+    "validate_before_sync": true
+  },
+  "logging": {
+    "level": "info",
+    "file": "/root/forte/logs/forte.log"
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "version": "1.0.0",
+  "mcp_servers": {
+    "agentmemory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@agentmemory/mcp"
+      ],
+      "env": {
+        "AGENTMEMORY_PORT": "3111"
+      },
+      "description": "Long-term memory for AI agents",
+      "homepage": "http://localhost:3113",
+      "enabled": true
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      },
+      "description": "GitHub integration",
+      "enabled": true
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem"
+      ],
+      "description": "File system access",
+      "enabled": false
+    },
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres"
+      ],
+      "description": "PostgreSQL database access",
+      "enabled": false
+    }
+  },
+  "tools_profiles": {
+    "claude-code": {
+      "name": "Claude Code",
+      "config_type": "json",
+      "config_path": "~/.config/claude-code/config.json",
+      "enabled_mcps": [
+        "agentmemory",
+        "github"
+      ],
+      "supported": true
+    },
+    "opencode": {
+      "name": "OpenCode",
+      "config_type": "json",
+      "config_path": "~/.opencode/config.json",
+      "enabled_mcps": [
+        "agentmemory"
+      ],
+      "supported": true
+    },
+    "kilocode": {
+      "name": "KiloCode",
+      "config_type": "json",
+      "config_path": "~/.kilocode/config.json",
+      "enabled_mcps": [
+        "agentmemory"
+      ],
+      "supported": true
+    },
+    "openclaw": {
+      "name": "OpenClaw",
+      "config_type": "yaml",
+      "config_path": "/root/.openclaw/config.yaml",
+      "enabled_mcps": [
+        "agentmemory",
+        "github"
+      ],
+      "supported": true
+    },
+    "hermes": {
+      "name": "Hermes",
+      "config_type": "yaml",
+      "config_path": "/root/.hermes/config.yaml",
+      "enabled_mcps": [
+        "agentmemory"
+      ],
+      "supported": true
+    }
+  }
+}

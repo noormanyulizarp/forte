@@ -1,0 +1,103 @@
+{
+  "tools": {
+    "claude-code": {
+      "name": "Claude Code",
+      "type": "code_editor",
+      "config_path": "~/.config/claude-code/claude_desktop_config.json",
+      "config_format": "json",
+      "mcp_key": "mcpServers",
+      "supports_env": true,
+      "enable_key": null,
+      "command_format": "string+array",
+      "env_syntax": "env"
+    },
+    "cline": {
+      "name": "Cline",
+      "type": "code_editor",
+      "config_path": "~/.clinerules",
+      "config_format": "yaml",
+      "mcp_key": "mcp",
+      "supports_env": true,
+      "enable_key": null,
+      "command_format": "array",
+      "env_syntax": "env"
+    },
+    "opencode": {
+      "name": "OpenCode",
+      "type": "code_editor",
+      "config_path": "~/.opencode/settings.json",
+      "config_format": "json",
+      "mcp_key": "mcp",
+      "supports_env": true,
+      "enable_key": null,
+      "command_format": "array",
+      "env_syntax": "env"
+    },
+    "kilocode": {
+      "name": "KiloCode",
+      "type": "code_editor",
+      "config_path": "~/.kilocode/mcp.json",
+      "config_format": "json",
+      "mcp_key": "mcp_servers",
+      "supports_env": true,
+      "enable_key": "enabled",
+      "command_format": "scalar+list",
+      "env_syntax": "environment"
+    },
+    "openclaw": {
+      "name": "OpenClaw",
+      "type": "agent_framework",
+      "config_path": "/root/.openclaw/workspace/config.yaml",
+      "config_format": "yaml",
+      "mcp_key": "mcp",
+      "supports_env": true,
+      "enable_key": null,
+      "command_format": "array",
+      "env_syntax": "env"
+    },
+    "hermes": {
+      "name": "Hermes",
+      "type": "agent_framework",
+      "config_path": "~/.hermes/config.yaml",
+      "config_format": "yaml",
+      "mcp_key": "mcp_servers",
+      "supports_env": true,
+      "enable_key": "disabled",
+      "command_format": "array",
+      "env_syntax": "env"
+    },
+    "picoclaw": {
+      "name": "PicoClaw",
+      "type": "agent_framework",
+      "config_path": "~/.picoclaw/config.json",
+      "config_format": "json",
+      "mcp_key": "mcp.servers",
+      "supports_env": true,
+      "enable_key": null,
+      "command_format": "string+array",
+      "env_syntax": "env"
+    }
+  },
+  "format_differences": {
+    "mcp_key_variants": [
+      "mcpServers",
+      "mcp",
+      "mcp_servers",
+      "mcp.servers"
+    ],
+    "command_formats": [
+      "string+array",
+      "array",
+      "scalar+list"
+    ],
+    "env_syntax_variants": [
+      "env",
+      "environment"
+    ],
+    "enable_keys": [
+      "enabled",
+      "disabled",
+      null
+    ]
+  }
+}

@@ -1,0 +1,96 @@
+# Forte Configuration
+# Unified MCP Manager for AI Development Tools
+
+version: "1.0.0"
+
+# Tool detection paths
+detection:
+  scan_paths:
+    - ~/.config/claude-code
+    - ~/.config/claude
+    - ~/.openclaw
+    - ~/.hermes
+    - ~/Library/Application\ Support/Claude
+    - ~/AppData/Roaming/Claude
+  
+  # Config file patterns per tool
+  patterns:
+    claude-code: "claude_desktop_config.json"
+    cline: ".clinerules"
+    opencode: "settings.json"
+    openclaw: "config.yaml"
+    hermes: "config.yaml"
+    kilocode: "mcp.json"
+
+# MCP Registry (known MCPs)
+mcp_registry:
+  filesystem:
+    name: "Filesystem MCP"
+    description: "Local filesystem access"
+    official: true
+  
+  brave-search:
+    name: "Brave Search"
+    description: "Web search via Brave"
+    official: true
+  
+  fetch:
+    name: "Fetch MCP"
+    description: "HTTP requests and web scraping"
+    official: true
+  
+  memory:
+    name: "Memory MCP"
+    description: "Persistent key-value storage"
+    official: true
+
+# Repository configuration
+repository:
+  # Supported platforms
+  platforms:
+    - github
+    - gitlab
+    - bitbucket
+  
+  # Default branch
+  default_branch: "main"
+  
+  # Config file path in repo
+  config_path: ".forte/config.json"
+  
+  # Auto-sync interval (minutes, 0 = disabled)
+  auto_sync: 0
+
+# Backup configuration
+backup:
+  enabled: true
+  location: "~/.forte/backups"
+  max_backups: 10
+  compression: true
+
+# Profiles
+profiles:
+  default:
+    description: "Default MCP configuration"
+    mcp_list:
+      - filesystem
+      - brave-search
+      - fetch
+      - memory
+  
+  minimal:
+    description: "Minimal MCP set"
+    mcp_list:
+      - filesystem
+      - fetch
+
+# Security
+security:
+  # Validate MCP configs before applying
+  validate_configs: true
+  
+  # Require confirmation for destructive operations
+  require_confirmation: true
+  
+  # Sanitize environment variables
+  sanitize_env: true
