@@ -3,6 +3,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import * as yaml from 'js-yaml';
+import { applyProfile } from '../lib/profile';
+import { loadMCPRegistry } from '../lib/mcp-registry';
 
 export const profileCommand = new Command('profile')
   .description('Profile management')
@@ -62,9 +64,16 @@ export const profileCommand = new Command('profile')
     new Command('use <name>')
       .description('Use a profile')
       .action(async (name) => {
-        console.log(`Applying profile '${name}'...`);
-        // TODO: Implement profile application
-        console.log('Profile application coming soon');
+        const mcpRegistry = loadMCPRegistry();
+        const result = applyProfile(name, mcpRegistry);
+
+        if (!result.success) {
+          console.error(`Error: ${result.error}`);
+          process.exit(1);
+        }
+
+        console.log(`✓ Applied profile '${name}'`);
+        console.log(`  MCPs activated: ${result.applied}`);
       })
   )
   .addCommand(
