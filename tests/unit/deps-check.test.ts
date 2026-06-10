@@ -1,49 +1,39 @@
 const childProcess = require('child_process');
-const { promisify } = require('util');
-const execAsync = promisify(childProcess.exec);
-
-jest.mock('child_process');
 
 describe('deps-check', () => {
   beforeEach(() => {
+    jest.resetModules();
     jest.clearAllMocks();
     jest.restoreAllMocks();
-  });
 
-  // NOTE: execAsync is bound at module load via promisify(exec).
-  // Mocking child_process.exec after require('deps-check') does not
-  // re-bind execAsync, so these scenarios are not interceptable
-  // without changing production code. Skipping until exec binding
-  // is made injectable or tests run against a real npm environment.
-  it.skip('detects installed npm package', async () => {
-    childProcess.exec.mockImplementation((cmd: string, cb: any) => {
+    childProcess.exec = jest.fn((cmd: string, cb: any) => {
       if (cmd.includes('npm list -g npm')) {
         process.nextTick(cb, null, { stdout: 'npm@10.0.0\n', stderr: '' });
-      } else {
+      } else if (cmd.includes('nonexistent-xyz')) {
         process.nextTick(cb, null, { stdout: '', stderr: '' });
+      } else if (cmd.includes('this-package-does-not-exist')) {
+        process.nextTick(cb, null, { stdout: '', stderr: '' });
+      } else {
+        process.nextTick(cb, new Error('ENOENT'));
       }
       return {} as any;
     });
+  });
+
+  it('detects installed npm package', async () => {
     const { checkNpmPackage } = require('../../src/lib/deps-check');
     const result = await checkNpmPackage('npm');
     expect(result.installed).toBe(true);
+    expect(result.name).toBe('npm');
   });
 
-  it.skip('detects missing package', async () => {
-    childProcess.exec.mockImplementation((cmd: string, cb: any) => {
-      process.nextTick(cb, null, { stdout: '', stderr: '' });
-      return {} as any;
-    });
+  it('detects missing package', async () => {
     const { checkNpmPackage } = require('../../src/lib/deps-check');
     const result = await checkNpmPackage('nonexistent-xyz');
     expect(result.installed).toBe(false);
   });
 
-  it.skip('returns not installed on exec failure', async () => {
-    childProcess.exec.mockImplementation((cmd: string, cb: any) => {
-      process.nextTick(cb, new Error('ENOENT'));
-      return {} as any;
-    });
+  it('returns not installed on exec failure', async () => {
     const { checkNpmPackage } = require('../../src/lib/deps-check');
     const result = await checkNpmPackage('bad-pkg');
     expect(result.installed).toBe(false);
@@ -105,7 +95,7 @@ describe('deps-check', () => {
     expect(out).toContain('1/2');
   });
 
-  it.skip('reports not installed for missing global packages', async () => {
+  it('reports not installed for missing global packages', async () => {
     const { checkNpmPackage } = require('../../src/lib/deps-check');
     const result = await checkNpmPackage('this-package-does-not-exist');
     expect(result.installed).toBe(false);

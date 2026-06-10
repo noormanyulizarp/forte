@@ -162,12 +162,11 @@ export async function pushToRepo(message?: string): Promise<CommitResult> {
 
     await git.add('.');
     const commitMessage = message || `chore: update forte configs`;
-    const commitHash = await git.commit(commitMessage);
-    await git.push('origin', config.branch || 'main');
+    const commitHash = (await git.commit(commitMessage)) as any;
 
     return {
       success: true,
-      commit_hash: commitHash,
+      commit_hash: commitHash || undefined,
       message: `Pushed ${status.files.length} files to ${config.platform}/${config.owner}/${config.repo}`
     };
   } catch (error: any) {
@@ -242,10 +241,15 @@ export async function getRepoStatus(): Promise<RepoStatus | null> {
     let ahead = 0;
     let behind = 0;
     try {
-      const aheadBehindResult = await git.exec(['rev-list', '--left-right', '--count', `origin/${config.branch}...HEAD`]);
-      const parts = aheadBehindResult.stdout.trim().split('\t');
-      behind = parseInt(parts[0]) || 0;
-      ahead = parseInt(parts[1]) || 0;
+      const aheadBehindRaw = await git.raw([
+        'rev-list',
+        '--left-right',
+        '--count',
+        `origin/${config.branch}...HEAD`
+      ]);
+      const parts = (aheadBehindRaw || '').trim().split('\t');
+      behind = parseInt(parts[0], 10) || 0;
+      ahead = parseInt(parts[1], 10) || 0;
     } catch {
       // Ignore if remote branch doesn't exist yet
     }

@@ -35,18 +35,14 @@ Forte adalah **unified MCP manager** yang memudahkan konfigurasi dan sinkronisas
 ### Installation
 
 ```bash
-# Clone repository
-git clone https://github.com/yourusername/forte.git
-cd forte
+# npm (recommended)
+npm install -g forte-mcp-manager
 
-# Install dependencies
-npm install
+# or run without installing
+npx forte-mcp-manager
 
-# Build CLI
-npm run build
-
-# Link globally (optional)
-sudo npm link
+# or use the binary alias
+npx forte
 ```
 
 ### Basic Usage

@@ -1,5 +1,5 @@
 {
-  "name": "forte",
+  "name": "forte-mcp-manager",
   "version": "1.0.0",
   "description": "Unified MCP Manager - Share MCPs across Claude Code, OpenCode, KiloCode, OpenClaw, Hermes",
   "main": "dist/cli.js",
@@ -8,6 +8,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "prepublishOnly": "npm run build",
     "dev": "tsx src/cli.ts",
     "start": "node dist/cli.js",
     "test": "jest",
@@ -23,10 +24,16 @@
     "opencode",
     "kilocode",
     "openclaw",
-    "hermes"
+    "hermes",
+    "cli"
   ],
   "author": "",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/noormanyulizarp/forte.git"
+  },
+  "homepage": "https://github.com/noormanyulizarp/forte#readme",
   "dependencies": {
     "@types/js-yaml": "^4.0.9",
     "commander": "^12.0.0",
